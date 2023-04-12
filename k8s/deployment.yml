@@ -1,0 +1,57 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: springboot-k8s-mysql
+  labels:
+    name: springboot-k8s-mysql
+spec:
+  ports:
+    - nodePort: 30163
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app: springboot-k8s-mysql
+  type: NodePort
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: springboot-k8s-mysql
+spec:
+  selector:
+    matchLabels:
+      app: springboot-k8s-mysql
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: springboot-k8s-mysql
+    spec:
+      containers:
+        - name: springboot-k8s-mysql
+          image: springboot-k8s-mysql
+          ports:
+            - containerPort: 9191
+          env:
+            - name: MYSQL_DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: db-conf
+                  key: host
+            - name: MYSQL_DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: db-conf
+                  key: schema_name
+            - name: MYSQL_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-conf
+                  key: username
+            - name: MYSQL_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-conf
+                  key: password

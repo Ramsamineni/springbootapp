@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: db-conf
+data:
+  host: mysqldb
+  schema_name: test
+  username: root
+  password: Cerebrone@2022
+  root_password: Cerebrone@2022
